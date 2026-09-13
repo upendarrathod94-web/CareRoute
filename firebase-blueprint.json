@@ -1,0 +1,44 @@
+{
+  "entities": {
+    "Medicine": {
+      "title": "Medicine",
+      "description": "Prescription and over the counter medicines",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "dosage": { "type": "string" },
+        "time": { "type": "string" },
+        "period": { "type": "string" },
+        "status": { "type": "string" },
+        "color": { "type": "string" },
+        "remainingCount": { "type": "number" },
+        "totalCount": { "type": "number" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["name", "status"]
+    },
+    "Appointment": {
+      "title": "Appointment",
+      "description": "Doctor appointments and consultations",
+      "type": "object",
+      "properties": {
+        "doctorName": { "type": "string" },
+        "specialty": { "type": "string" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["doctorName", "status"]
+    }
+  },
+  "firestore": {
+    "/medicines/{medId}": {
+      "schema": "Medicine",
+      "description": "User medications and schedules"
+    },
+    "/appointments/{appId}": {
+      "schema": "Appointment",
+      "description": "Doctor consultations and appointments"
+    }
+  }
+}
