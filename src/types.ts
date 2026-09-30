@@ -159,6 +159,7 @@ export type ScreenId =
   | 'permissions_settings'
   | 'caregiver_dashboard'
   | 'notification_settings'
-  | 'profile';
+  | 'profile'
+  | 'scan';
 
-export type MainTab = 'today' | 'appointments' | 'medicines' | 'circle' | 'profile';
+export type MainTab = 'today' | 'medicines' | 'scan' | 'appointments' | 'profile' | 'circle';

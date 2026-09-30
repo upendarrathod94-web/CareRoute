@@ -1,17 +1,14 @@
 import React, { useState } from 'react';
 import { Appointment } from '../../types';
-import { ASSETS_3D } from '../../assets/assetRegistry';
 import {
   Calendar,
   Plus,
   Clock,
   MapPin,
-  CalendarCheck,
-  AlertCircle,
-  MoreVertical,
   ChevronRight,
-  ShieldCheck,
-  HelpCircle,
+  FileQuestion,
+  RotateCcw,
+  X,
 } from 'lucide-react';
 import { playChime, triggerHaptic } from '../../utils/audioHaptics';
 
@@ -30,193 +27,165 @@ export const AppointmentsScreen: React.FC<Props> = ({
   onRescheduleAppointment,
   onOpenPrepModal,
 }) => {
-  const [selectedApptId, setSelectedApptId] = useState<string | null>(null);
+  const [selectedAppt, setSelectedAppt] = useState<Appointment | null>(null);
+
+  const upcomingAppointment = appointments[0];
+  const otherAppointments = appointments.slice(1);
 
   const handleCancel = (id: string) => {
     playChime('alert');
-    triggerHaptic(50);
+    triggerHaptic(40);
     onCancelAppointment(id);
-    setSelectedApptId(null);
+    setSelectedAppt(null);
   };
 
   return (
-    <div className="flex flex-col h-full p-4 sm:p-5 overflow-y-auto animate-fadeIn">
-      {/* Top Header */}
-      <div className="flex items-center justify-between mb-4">
+    <div className="flex flex-col min-h-full px-5 py-6 space-y-6 max-w-xl mx-auto w-full animate-fadeIn pb-12">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             Appointments
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            Manage your doctor visits and reminders
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+            Manage your doctor visits and reminders.
           </p>
         </div>
 
         <button
           type="button"
           onClick={onStartBooking}
-          className="h-10 px-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center gap-1.5 shadow-sm transition-all"
+          className="min-h-[44px] px-3.5 py-2 rounded-xl bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-colors shrink-0"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-4 h-4 stroke-[2.5]" />
           <span>Book Visit</span>
         </button>
       </div>
 
       {appointments.length === 0 ? (
-        /* Empty State (Screen 6 in specification) */
-        <div className="my-auto flex flex-col items-center text-center p-6 bg-slate-50 dark:bg-slate-800/40 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700">
-          <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-md mb-4 border border-slate-200 dark:border-slate-700">
-            <img
-              src={ASSETS_3D.doctorCalendar}
-              alt="No appointments"
-              className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-            />
+        /* Calm Empty State */
+        <div className="p-8 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-3">
+          <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 mx-auto flex items-center justify-center">
+            <Calendar className="w-6 h-6 text-teal-700 dark:text-teal-400" />
           </div>
-
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">
-            No appointments yet
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+            No upcoming appointments
           </h2>
-          <p className="text-xs text-slate-600 dark:text-slate-300 max-w-xs mb-5 leading-relaxed">
-            Book a visit with your doctor or specialist. We'll automatically remind you the day before and 1 hour before.
+          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-xs mx-auto leading-relaxed">
+            Schedule visits with your cardiologist, primary doctor, or specialist. Reminders are sent automatically.
           </p>
-
           <button
             type="button"
             onClick={onStartBooking}
-            className="w-full max-w-xs h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-sm flex items-center justify-center gap-2 shadow-sm transition-colors"
+            className="mt-3 px-5 py-2.5 bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors"
           >
-            <Plus className="w-4 h-4" />
-            <span>Find a Doctor & Book</span>
+            Find a Doctor & Book
           </button>
         </div>
       ) : (
-        /* Booked Appointments List */
-        <div className="space-y-4">
-          <div className="flex items-center justify-between text-xs text-slate-500 font-medium px-1">
-            <span>Upcoming Visits ({appointments.length})</span>
-            <span>Reminders Active</span>
-          </div>
+        <div className="space-y-6">
+          {/* Section 9: Show UPCOMING APPOINTMENT first */}
+          {upcomingAppointment && (
+            <section aria-labelledby="upcoming-heading">
+              <span
+                id="upcoming-heading"
+                className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-2 px-0.5"
+              >
+                Upcoming Appointment
+              </span>
 
-          {appointments.map((appt) => (
-            <div
-              key={appt.id}
-              className="p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xs relative"
-            >
-              <div className="flex items-start justify-between gap-2 mb-2">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold shrink-0">
-                    <CalendarCheck className="w-5 h-5" />
+              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 shadow-xs space-y-4">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                    {upcomingAppointment.doctorName}
+                  </h3>
+                  <p className="text-sm font-medium text-teal-700 dark:text-teal-400 mt-0.5">
+                    {upcomingAppointment.specialty}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    {upcomingAppointment.clinic}
+                  </p>
+                </div>
+
+                <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200 font-semibold">
+                    <Calendar className="w-4 h-4 text-teal-700 dark:text-teal-400" />
+                    <span>{upcomingAppointment.date}</span>
                   </div>
-                  <div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded-md">
-                      {appt.specialty}
-                    </span>
-                    <h3 className="font-bold text-base text-slate-900 dark:text-white mt-0.5">
-                      {appt.doctorName}
-                    </h3>
+                  <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 font-bold tabular-nums">
+                    <Clock className="w-3.5 h-3.5 text-slate-400" />
+                    <span>{upcomingAppointment.time}</span>
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    setSelectedApptId(selectedApptId === appt.id ? null : appt.id)
-                  }
-                  className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"
-                >
-                  <MoreVertical className="w-4 h-4" />
-                </button>
-              </div>
+                {/* Actions: View Details / Prep Pocket */}
+                <div className="flex items-center gap-2 pt-1">
+                  {onOpenPrepModal && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenPrepModal(upcomingAppointment)}
+                      className="flex-1 h-11 bg-teal-700 hover:bg-teal-800 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors"
+                    >
+                      <FileQuestion className="w-3.5 h-3.5" />
+                      <span>View Details & Questions</span>
+                    </button>
+                  )}
 
-              <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300 pl-1 mb-3">
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
-                  <span className="font-semibold text-slate-800 dark:text-slate-200">
-                    {appt.date}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
-                  <span>{appt.time} (Arrive 15 min early)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <span>{appt.clinic}</span>
-                </div>
-              </div>
-
-              {appt.reason && (
-                <div className="mb-3 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 text-xs text-slate-600 dark:text-slate-300">
-                  <span className="font-semibold text-slate-800 dark:text-slate-200">Reason: </span>
-                  {appt.reason}
-                </div>
-              )}
-
-              {/* Feature 4: Doctor Visit Prep Pocket Button */}
-              {onOpenPrepModal && (
-                <button
-                  type="button"
-                  onClick={() => onOpenPrepModal(appt)}
-                  className="w-full mt-2.5 py-2 px-3 rounded-xl bg-teal-50 dark:bg-teal-950/50 hover:bg-teal-100 text-teal-800 dark:text-teal-200 text-xs font-semibold flex items-center justify-between transition-colors border border-teal-200/70 dark:border-teal-800"
-                >
-                  <div className="flex items-center gap-2">
-                    <HelpCircle className="w-4 h-4 text-teal-600" />
-                    <span>Doctor Visit Prep Pocket</span>
-                  </div>
-                  <span className="text-[11px] font-bold bg-teal-200/60 dark:bg-teal-900 px-2 py-0.5 rounded-md">
-                    {appt.prepQuestions?.length || 2} questions ready →
-                  </span>
-                </button>
-              )}
-
-              {appt.caregiverNotified && (
-                <div className="mt-2 flex items-center gap-1.5 text-[11px] text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 px-2.5 py-1 rounded-lg">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  <span>Shared with Care Circle (Priya Sharma)</span>
-                </div>
-              )}
-
-              {/* Action dropdown drawer when selected */}
-              {selectedApptId === appt.id && (
-                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-700 flex gap-2">
                   <button
                     type="button"
-                    onClick={() => onRescheduleAppointment(appt)}
-                    className="flex-1 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold hover:bg-slate-200"
+                    onClick={() => onRescheduleAppointment(upcomingAppointment)}
+                    className="h-11 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-xs flex items-center justify-center gap-1 transition-colors"
                   >
-                    Reschedule
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleCancel(appt.id)}
-                    className="flex-1 py-2 rounded-xl border border-red-200 dark:border-red-900/60 text-red-600 dark:text-red-400 text-xs font-semibold hover:bg-red-50 dark:hover:bg-red-950/30"
-                  >
-                    Cancel Visit
+                    <span>Reschedule</span>
                   </button>
                 </div>
-              )}
-            </div>
-          ))}
+              </div>
+            </section>
+          )}
 
-          <button
-            type="button"
-            onClick={onStartBooking}
-            className="w-full py-3 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:border-blue-400 hover:text-blue-600 flex items-center justify-center gap-1.5 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Schedule another appointment</span>
-          </button>
+          {/* Other Scheduled Visits */}
+          {otherAppointments.length > 0 && (
+            <section aria-labelledby="other-visits-heading">
+              <span
+                id="other-visits-heading"
+                className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-2 px-0.5"
+              >
+                Other Scheduled Visits
+              </span>
+
+              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 divide-y divide-slate-100 dark:divide-slate-800 shadow-xs overflow-hidden">
+                {otherAppointments.map((appt) => (
+                  <div
+                    key={appt.id}
+                    className="p-4 flex items-center justify-between gap-3 hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
+                  >
+                    <div>
+                      <h4 className="font-bold text-sm text-slate-900 dark:text-white">
+                        {appt.doctorName}
+                      </h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                        {appt.specialty} · {appt.date} at {appt.time}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {onOpenPrepModal && (
+                        <button
+                          type="button"
+                          onClick={() => onOpenPrepModal(appt)}
+                          className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-lg transition-colors"
+                        >
+                          Details
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       )}
-
-      {/* Safety Notice */}
-      <div className="mt-auto pt-4">
-        <p className="text-[11px] text-slate-500 dark:text-slate-400 text-center flex items-center justify-center gap-1">
-          <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-          <span>Need immediate urgent care? Please call 911 or visit the ER.</span>
-        </p>
-      </div>
     </div>
   );
 };

@@ -93,7 +93,7 @@ export const DoctorProfileScreen: React.FC<Props> = ({
         <button
           type="button"
           onClick={onProceedToSlots}
-          className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-2xl shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 text-base transition-all"
+          className="w-full h-14 bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white font-bold rounded-2xl shadow-xs flex items-center justify-center gap-2 text-base transition-colors"
         >
           <Calendar className="w-5 h-5" />
           <span>Choose Available Time Slot</span>

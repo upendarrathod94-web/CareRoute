@@ -202,7 +202,7 @@ export const AvailableSlotsScreen: React.FC<Props> = ({
           type="button"
           disabled={simulateNoSlots}
           onClick={handleContinue}
-          className="w-full h-14 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:pointer-events-none text-white font-semibold rounded-2xl shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 text-base transition-all"
+          className="w-full h-14 bg-teal-700 hover:bg-teal-800 active:bg-teal-900 disabled:opacity-40 disabled:pointer-events-none text-white font-bold rounded-2xl shadow-xs flex items-center justify-center gap-2 text-base transition-colors"
         >
           <span>Continue with {selectedTime}</span>
           <ArrowRight className="w-5 h-5" />

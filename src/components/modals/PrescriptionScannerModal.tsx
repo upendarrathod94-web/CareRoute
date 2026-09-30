@@ -321,12 +321,12 @@ export const PrescriptionScannerModal: React.FC<Props> = ({
         {/* Modal Header */}
         <div className="p-4 bg-slate-900 text-white flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center">
               <Camera className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold leading-tight">Prescription Camera OCR</h2>
-              <p className="text-[11px] text-slate-400">Capture medicine name & dosage</p>
+              <h2 className="text-sm font-bold leading-tight">Scan your medicine</h2>
+              <p className="text-[11px] text-slate-400">Place your medicine bottle, package, or tablet inside the frame.</p>
             </div>
           </div>
 
@@ -447,12 +447,10 @@ export const PrescriptionScannerModal: React.FC<Props> = ({
                 <button
                   type="button"
                   onClick={handleSnapPhoto}
-                  className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-98 text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-lg transition-all text-sm"
+                  className="w-full h-12 bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-xs transition-all text-sm"
                 >
-                  <div className="w-4 h-4 rounded-full border-2 border-white flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-full bg-white" />
-                  </div>
-                  <span>Capture & Scan Bottle</span>
+                  <Camera className="w-4 h-4" />
+                  <span>CAPTURE</span>
                 </button>
               ) : null}
 
@@ -670,16 +668,16 @@ export const PrescriptionScannerModal: React.FC<Props> = ({
                   className="py-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center gap-1.5"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Retake / Rescan</span>
+                  <span>Scan Again</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleConfirmAndApply}
-                  className="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm"
+                  className="py-2.5 px-3 rounded-xl bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs"
                 >
                   <Check className="w-3.5 h-3.5" strokeWidth={3} />
-                  <span>Add to Schedule</span>
+                  <span>Add to My Medicines</span>
                 </button>
               </div>
             </div>

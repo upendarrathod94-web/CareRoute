@@ -46,6 +46,7 @@ import { CaregiverPermissionsScreen } from './components/screens/CaregiverPermis
 import { CaregiverDashboardScreen } from './components/screens/CaregiverDashboardScreen';
 import { NotificationSettingsScreen } from './components/screens/NotificationSettingsScreen';
 import { ProfileScreen } from './components/screens/ProfileScreen';
+import { ScanScreen } from './components/screens/ScanScreen';
 import { PrescriptionScannerModal } from './components/modals/PrescriptionScannerModal';
 import { EmergencySosModal } from './components/modals/EmergencySosModal';
 import { RefillOrderModal } from './components/modals/RefillOrderModal';
@@ -178,10 +179,11 @@ export default function App() {
   const handleNavigateTab = (tab: MainTab) => {
     setCurrentTab(tab);
     if (tab === 'today') setCurrentScreen('today');
+    else if (tab === 'medicines') setCurrentScreen('medicines');
+    else if (tab === 'scan') setCurrentScreen('scan');
     else if (tab === 'appointments') {
       setCurrentScreen(appointments.length === 0 ? 'empty_appointments' : 'appointments');
-    } else if (tab === 'medicines') setCurrentScreen('medicines');
-    else if (tab === 'circle') setCurrentScreen('care_circle');
+    } else if (tab === 'circle') setCurrentScreen('care_circle');
     else if (tab === 'profile') setCurrentScreen('profile');
   };
 
@@ -190,6 +192,10 @@ export default function App() {
     setCurrentScreen(screen);
     if (['today', 'reminder_active'].includes(screen)) {
       setCurrentTab('today');
+    } else if (['medicines', 'add_medicine', 'medicine_history'].includes(screen)) {
+      setCurrentTab('medicines');
+    } else if (screen === 'scan') {
+      setCurrentTab('scan');
     } else if (
       [
         'appointments',
@@ -202,12 +208,10 @@ export default function App() {
       ].includes(screen)
     ) {
       setCurrentTab('appointments');
-    } else if (['medicines', 'add_medicine', 'medicine_history'].includes(screen)) {
-      setCurrentTab('medicines');
     } else if (
       ['care_circle', 'invite_caregiver', 'permissions_settings', 'caregiver_dashboard'].includes(screen)
     ) {
-      setCurrentTab('circle');
+      setCurrentTab('profile');
     } else if (['profile', 'notification_settings', 'access_setup', 'role', 'privacy_consent'].includes(screen)) {
       setCurrentTab('profile');
     }
@@ -650,8 +654,17 @@ export default function App() {
             onAddMedicine={() => setCurrentScreen('add_medicine')}
             onOpenReminder={(med) => setActiveReminderMed(med)}
             onViewHistory={() => setCurrentScreen('medicine_history')}
-            onOpenScanner={() => setIsScannerOpen(true)}
+            onOpenScanner={() => setCurrentScreen('scan')}
             onOpenRefill={(med) => setActiveRefillMed(med)}
+            onMarkMedicine={handleMarkMedicine}
+          />
+        );
+
+      case 'scan':
+        return (
+          <ScanScreen
+            onApplyPrescription={handleApplyPrescriptionScan}
+            onNavigateHome={() => handleNavigateTab('today')}
           />
         );
 
@@ -757,7 +770,7 @@ export default function App() {
   };
 
   return (
-    <div className="h-[100dvh] w-full bg-slate-950 text-slate-100 flex flex-col font-sans overflow-hidden select-none">
+    <div className="h-[100dvh] w-full bg-[#ECEEF1] dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans overflow-hidden select-none">
       {/* Offline Alert Bar if simulated / offline */}
       {isOffline && (
         <div className="bg-amber-950/95 border-b border-amber-800 text-amber-200 px-4 py-1.5 text-xs flex items-center justify-center gap-2 shrink-0 z-50">
@@ -769,7 +782,7 @@ export default function App() {
       )}
 
       {/* Direct Phone Application - Responsive and Edge-to-Edge for All Devices */}
-      <main className="flex-1 w-full h-full flex flex-col items-center justify-start overflow-hidden min-h-0 bg-slate-950">
+      <main className="flex-1 w-full h-full flex flex-col items-center justify-start overflow-hidden min-h-0">
         <MobileFrame
           currentScreen={currentScreen}
           currentTab={currentTab}
